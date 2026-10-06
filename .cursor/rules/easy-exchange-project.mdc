@@ -1,0 +1,50 @@
+---
+
+description: Project-wide development rules for Easy Exchange
+alwaysApply: true
+-----------------
+
+# Easy Exchange Project Rules
+
+## Source of Truth
+
+* Treat the files in `/specs` as the authoritative source for application requirements.
+* Read the relevant specification before implementing or changing functionality.
+* Do not add features that are outside the specifications unless the specifications are updated first.
+* If specifications conflict or are unclear, identify the conflict before making assumptions.
+
+## Architecture
+
+* Maintain the separation between the React frontend, Express backend, and SQLite database.
+* Keep business rules and authorization enforcement on the backend.
+* Keep database access within the backend database/data-access layer.
+* Keep frontend API communication within the API service layer rather than scattering requests throughout components.
+
+## Security
+
+* Never expose passwords, password hashes, sessions, secrets, or other sensitive information to the client.
+* Validate and authorize requests on the server.
+* Use parameterized database queries.
+* Never commit secrets or credentials to source control.
+* Do not weaken security controls simply to make functionality easier to implement.
+
+## Code Quality
+
+* Prefer simple, maintainable solutions over unnecessary complexity.
+* Reuse existing components, utilities, and services when appropriate.
+* Avoid unnecessary dependencies.
+* Do not modify unrelated code while implementing a feature.
+* Preserve existing functionality when making changes.
+
+## Testing
+
+* Add or update tests when implementing or changing functionality.
+* Tests should verify both successful behavior and important failure/authorization cases.
+* Do not modify tests solely to make failing code pass without addressing the underlying behavior.
+
+## Development Process
+
+* Implement functionality incrementally rather than building the entire application in one step.
+* Before making significant changes, inspect the existing implementation and relevant specifications.
+* After changes, verify that the implementation remains consistent with the product, functional, technical, and UI specifications.
+* When a requirement changes, update the appropriate specification before or alongside the implementation.
