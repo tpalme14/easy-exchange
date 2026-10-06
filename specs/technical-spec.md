@@ -218,6 +218,8 @@ The requester is the user proposing the exchange.
 
 The owner of `requested_book_id` is the recipient of the proposal.
 
+A unique partial index enforces that a requester may have only one `PENDING` exchange for the same offered and requested books. Cancelled, rejected, or accepted exchanges do not block a later pending proposal for the same pair.
+
 ---
 
 # 6. Database Relationships
@@ -295,16 +297,43 @@ Returns the currently authenticated user.
 
 ---
 
+## 8.2 Operational health
+
+### GET `/api/health`
+
+Returns API and database availability for local development and operational checks.
+
+This endpoint does not require authentication.
+
+---
+
+## 8.3 Current user profile
+
+### PUT `/api/users/me`
+
+Updates the authenticated user's name.
+
+Authentication required.
+
+Email cannot be changed through this endpoint. If `email` is included in the request body, it is ignored.
+
+---
+
 # 9. Book API
 
 ### GET `/api/books`
 
 Returns available books.
 
-Supports search by:
+Supports search query parameters:
 
-* title
-* author
+* `title` — matches book title (case-insensitive)
+* `author` — matches author (case-insensitive)
+* `q` — matches title **or** author (case-insensitive)
+
+The catalog UI uses `q` for a single search box. When `q` is provided, it performs the combined title-or-author search. `title` and `author` may still be used independently.
+
+Authentication is optional for this endpoint. When a session is present, the current user's own books are omitted from the catalog.
 
 ### GET `/api/books/:id`
 
@@ -331,6 +360,8 @@ Deletes a book.
 Authentication required.
 
 The authenticated user must own the book.
+
+A book cannot be deleted if it has been exchanged, or if any exchange record still references it. Those cases return `409`.
 
 ### GET `/api/users/me/books`
 
