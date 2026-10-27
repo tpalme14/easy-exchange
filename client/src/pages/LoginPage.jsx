@@ -40,38 +40,48 @@ export default function LoginPage() {
   }
 
   return (
-    <section className="auth-card">
-      <h2>Login</h2>
-      <p className="muted">Easy Exchange</p>
-      <form className="form" onSubmit={handleSubmit} noValidate>
-        <ErrorMessage message={error} />
-        <label>
-          Email <span className="required">(required)</span>
-          <input
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Password <span className="required">(required)</span>
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
-        </label>
-        <button type="submit" disabled={busy}>
-          {busy ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      <p>
-        Need an account? <Link to="/register">Register</Link>
-      </p>
-    </section>
+    <div className="auth-layout">
+      <aside className="auth-aside">
+        <p className="eyebrow">Welcome back</p>
+        <p className="auth-aside-title">Your next read is already on someone&apos;s shelf.</p>
+        <p>
+          Sign in to browse books offered by fellow readers, manage your listings, and respond
+          to exchange proposals.
+        </p>
+      </aside>
+      <section className="auth-card">
+        <h2>Login</h2>
+        <p className="muted">Easy Exchange</p>
+        <form className="form" onSubmit={handleSubmit} noValidate>
+          <ErrorMessage message={error} />
+          <label>
+            Email <span className="required">(required)</span>
+            <input
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Password <span className="required">(required)</span>
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </label>
+          <button type="submit" disabled={busy}>
+            {busy ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+        <p className="auth-switch">
+          Need an account? <Link to="/register">Register</Link>
+        </p>
+      </section>
+    </div>
   );
 }

@@ -73,13 +73,22 @@ export default function MyExchangesPage() {
 
   return (
     <section>
-      <h2>My Exchanges</h2>
+      <div className="page-header">
+        <div>
+          <h2>My Exchanges</h2>
+          <p className="page-intro">
+            Review proposals from other readers and keep track of the swaps you&apos;ve offered.
+          </p>
+        </div>
+      </div>
       {message ? <p className="notice success">{message}</p> : null}
       {confirm ? null : <ErrorMessage message={error} />}
       <div className="tabs" role="tablist" aria-label="Exchange lists">
         <button
           type="button"
           role="tab"
+          id="exchanges-tab-received"
+          aria-controls="exchanges-panel"
           aria-selected={tab === 'received'}
           onClick={() => setTab('received')}
         >
@@ -88,41 +97,50 @@ export default function MyExchangesPage() {
         <button
           type="button"
           role="tab"
+          id="exchanges-tab-sent"
+          aria-controls="exchanges-panel"
           aria-selected={tab === 'sent'}
           onClick={() => setTab('sent')}
         >
           Sent
         </button>
       </div>
-      {loading ? <LoadingIndicator label="Loading exchanges..." /> : null}
-      {!loading && list.length === 0 ? (
-        <EmptyState
-          message={
-            tab === 'received'
-              ? "You don't have any incoming exchange requests."
-              : "You haven't proposed any exchanges yet."
-          }
-          action={
-            tab === 'sent' ? (
-              <Link className="button" to="/">
-                Browse Books
-              </Link>
-            ) : null
-          }
-        />
-      ) : null}
-      <div className="stack">
-        {list.map((exchange) => (
-          <ExchangeCard
-            key={exchange.id}
-            exchange={exchange}
-            perspective={tab}
-            busy={busyId === exchange.id}
-            onAccept={() => setConfirm({ action: 'accept', exchange })}
-            onReject={() => setConfirm({ action: 'reject', exchange })}
-            onCancel={() => setConfirm({ action: 'cancel', exchange })}
+      <div
+        id="exchanges-panel"
+        role="tabpanel"
+        aria-labelledby={tab === 'received' ? 'exchanges-tab-received' : 'exchanges-tab-sent'}
+      >
+        {loading ? <LoadingIndicator label="Loading exchanges..." /> : null}
+        {!loading && list.length === 0 ? (
+          <EmptyState
+            title={tab === 'received' ? 'No requests yet' : 'Nothing proposed yet'}
+            message={
+              tab === 'received'
+                ? "You don't have any incoming exchange requests."
+                : "You haven't proposed any exchanges yet."
+            }
+            action={
+              tab === 'sent' ? (
+                <Link className="button" to="/">
+                  Browse Books
+                </Link>
+              ) : null
+            }
           />
-        ))}
+        ) : null}
+        <div className="stack">
+          {list.map((exchange) => (
+            <ExchangeCard
+              key={exchange.id}
+              exchange={exchange}
+              perspective={tab}
+              busy={busyId === exchange.id}
+              onAccept={() => setConfirm({ action: 'accept', exchange })}
+              onReject={() => setConfirm({ action: 'reject', exchange })}
+              onCancel={() => setConfirm({ action: 'cancel', exchange })}
+            />
+          ))}
+        </div>
       </div>
       {confirm ? (
         <ConfirmationDialog

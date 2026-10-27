@@ -62,54 +62,66 @@ export default function RegisterPage() {
   }
 
   return (
-    <section className="auth-card">
-      <h2>Register</h2>
-      <form className="form" onSubmit={handleSubmit} noValidate>
-        <ErrorMessage message={error} />
-        <label>
-          Name <span className="required">(required)</span>
-          <input name="name" value={values.name} onChange={handleChange} required />
-        </label>
-        <label>
-          Email <span className="required">(required)</span>
-          <input
-            type="email"
-            name="email"
-            autoComplete="email"
-            value={values.email}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <label>
-          Password <span className="required">(required)</span>
-          <input
-            type="password"
-            name="password"
-            autoComplete="new-password"
-            value={values.password}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <label>
-          Confirm password <span className="required">(required)</span>
-          <input
-            type="password"
-            name="confirmPassword"
-            autoComplete="new-password"
-            value={values.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <button type="submit" disabled={busy}>
-          {busy ? 'Creating account...' : 'Register'}
-        </button>
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
-    </section>
+    <div className="auth-layout">
+      <aside className="auth-aside">
+        <p className="eyebrow">Join the exchange</p>
+        <p className="auth-aside-title">Every finished book deserves another reader.</p>
+        <ul className="auth-aside-list">
+          <li>List the books you&apos;re ready to pass along.</li>
+          <li>Browse titles offered by readers in the community.</li>
+          <li>Propose a simple one-for-one swap.</li>
+        </ul>
+      </aside>
+      <section className="auth-card">
+        <h2>Register</h2>
+        <p className="muted">Easy Exchange</p>
+        <form className="form" onSubmit={handleSubmit} noValidate>
+          <ErrorMessage message={error} />
+          <label>
+            Name <span className="required">(required)</span>
+            <input name="name" value={values.name} onChange={handleChange} required />
+          </label>
+          <label>
+            Email <span className="required">(required)</span>
+            <input
+              type="email"
+              name="email"
+              autoComplete="email"
+              value={values.email}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Password <span className="required">(required)</span>
+            <input
+              type="password"
+              name="password"
+              autoComplete="new-password"
+              value={values.password}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Confirm password <span className="required">(required)</span>
+            <input
+              type="password"
+              name="confirmPassword"
+              autoComplete="new-password"
+              value={values.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <button type="submit" disabled={busy}>
+            {busy ? 'Creating account...' : 'Register'}
+          </button>
+        </form>
+        <p className="auth-switch">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+      </section>
+    </div>
   );
 }

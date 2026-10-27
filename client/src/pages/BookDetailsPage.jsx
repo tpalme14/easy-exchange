@@ -4,6 +4,7 @@ import { deleteBook, getBook, updateBook } from '../services/bookService.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { getErrorMessage } from '../utils/errors.js';
 import { formatBookStatus, formatCondition } from '../utils/format.js';
+import BookCover from '../components/BookCover.jsx';
 import ConfirmationDialog from '../components/ConfirmationDialog.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
 import LoadingIndicator from '../components/LoadingIndicator.jsx';
@@ -89,58 +90,89 @@ export default function BookDetailsPage() {
   }
 
   if (error && !book) {
-    return <ErrorMessage message={error} />;
+    return (
+      <section className="stack">
+        <ErrorMessage message={error} />
+        <p>
+          <Link to="/">Back to available books</Link>
+        </p>
+      </section>
+    );
   }
 
   return (
-    <section>
-      <h2>{book.title}</h2>
-      <ErrorMessage message={error} />
-      {feedback ? <p className="notice success">{feedback}</p> : null}
-      <div className="card stack">
-        <p>
-          <strong>Author:</strong> {book.author}
-        </p>
-        <p>
-          <strong>Description:</strong> {book.description || 'No description provided.'}
-        </p>
-        <p>
+    <section className="book-detail">
+      <div className="book-detail-cover">
+        <BookCover title={book.title} author={book.author} size="lg" />
+      </div>
+      <div className="book-detail-body">
+        <p className="eyebrow">{isOwner ? 'Your listing' : 'Book details'}</p>
+        <h2 className="book-detail-title">{book.title}</h2>
+        <p className="book-detail-author">by {book.author}</p>
+        <div className="badge-row">
           <StatusBadge type="Condition" value={formatCondition(book.condition)} />
-        </p>
-        <p>
-          <strong>Owner:</strong> {book.owner.name}
-        </p>
-        <p>
           <StatusBadge type="Availability" value={formatBookStatus(book.status)} />
-        </p>
+        </div>
+        <ErrorMessage message={error} />
+        {feedback ? <p className="notice success">{feedback}</p> : null}
+        <dl className="detail-list">
+          <div>
+            <dt>Author</dt>
+            <dd>{book.author}</dd>
+          </div>
+          <div>
+            <dt>Owner</dt>
+            <dd>{isOwner ? `${book.owner.name} (you)` : book.owner.name}</dd>
+          </div>
+          <div>
+            <dt>Condition</dt>
+            <dd>{formatCondition(book.condition)}</dd>
+          </div>
+        </dl>
+        <div className="book-detail-description">
+          <h3>Description</h3>
+          <p className={book.description ? undefined : 'muted'}>
+            {book.description || 'No description provided.'}
+          </p>
+        </div>
         {book.status !== 'AVAILABLE' && !isOwner ? (
           <p className="notice info" role="status">
             This book cannot currently be requested.
           </p>
         ) : null}
-      </div>
-      <div className="button-row">
-        {canRequest ? (
-          <Link className="button" to={`/books/${book.id}/propose`}>
-            Propose Exchange
-          </Link>
-        ) : null}
-        {canManage ? (
-          <>
-            <Link className="button secondary" to={`/my-books/${book.id}/edit`}>
-              Edit
+        <div className="button-row">
+          {canRequest ? (
+            <Link className="button" to={`/books/${book.id}/propose`}>
+              Propose Exchange
             </Link>
-            <button type="button" className="secondary" onClick={toggleAvailability} disabled={busy}>
-              {book.status === 'AVAILABLE' ? 'Mark unavailable' : 'Mark available'}
-            </button>
-            <button type="button" className="danger" onClick={() => setConfirmDelete(true)} disabled={busy}>
-              Delete
-            </button>
-          </>
-        ) : null}
-        <Link className="button secondary" to={isOwner ? '/my-books' : '/'}>
-          Back
-        </Link>
+          ) : null}
+          {canManage ? (
+            <>
+              <Link className="button secondary" to={`/my-books/${book.id}/edit`}>
+                Edit
+              </Link>
+              <button
+                type="button"
+                className="secondary"
+                onClick={toggleAvailability}
+                disabled={busy}
+              >
+                {book.status === 'AVAILABLE' ? 'Mark unavailable' : 'Mark available'}
+              </button>
+              <button
+                type="button"
+                className="danger-outline"
+                onClick={() => setConfirmDelete(true)}
+                disabled={busy}
+              >
+                Delete
+              </button>
+            </>
+          ) : null}
+          <Link className="button ghost" to={isOwner ? '/my-books' : '/'}>
+            Back
+          </Link>
+        </div>
       </div>
       {confirmDelete ? (
         <ConfirmationDialog

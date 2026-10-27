@@ -40,7 +40,15 @@ export default function AddBookPage() {
 
   return (
     <section>
-      <h2>Add Book</h2>
+      <div className="page-header">
+        <div>
+          <h2>Add Book</h2>
+          <p className="page-intro">
+            Share a book you&apos;re ready to pass along. Honest condition notes help other
+            readers decide.
+          </p>
+        </div>
+      </div>
       <BookForm
         values={values}
         onChange={setValues}

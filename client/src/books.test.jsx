@@ -73,6 +73,43 @@ describe('book pages', () => {
     await waitFor(() => expect(getBooks).toHaveBeenCalledWith({ q: 'dune' }));
   });
 
+  it('offers a propose exchange shortcut only for available catalog books', async () => {
+    getBooks.mockResolvedValue({
+      books: [
+        {
+          id: 2,
+          title: 'Dune',
+          author: 'Frank Herbert',
+          condition: 'LIKE_NEW',
+          status: 'AVAILABLE',
+          owner: { id: 9, name: 'Jordan' }
+        }
+      ]
+    });
+    renderPage(<HomePage />);
+    const propose = await screen.findByRole('link', { name: 'Propose Exchange' });
+    expect(propose).toHaveAttribute('href', '/books/2/propose');
+    expect(screen.getByRole('link', { name: 'View Details' })).toHaveAttribute('href', '/books/2');
+    expect(screen.getByText(/1 book on the shelf/i)).toBeInTheDocument();
+  });
+
+  it('shows a no-match state for searches and clears the search', async () => {
+    getBooks.mockResolvedValueOnce({ books: [] });
+    renderPage(<HomePage />);
+    await screen.findByText(/no books available for exchange/i);
+
+    getBooks.mockResolvedValueOnce({ books: [] });
+    await userEvent.type(screen.getByPlaceholderText(/search title or author/i), 'zzz');
+    await userEvent.click(screen.getByRole('button', { name: 'Search' }));
+    expect(await screen.findByText(/no available books match "zzz"/i)).toBeInTheDocument();
+
+    getBooks.mockResolvedValueOnce({ books: [] });
+    await userEvent.click(screen.getByRole('button', { name: 'Clear search' }));
+    await waitFor(() => expect(getBooks).toHaveBeenLastCalledWith({}));
+    expect(screen.getByPlaceholderText(/search title or author/i)).toHaveValue('');
+    expect(await screen.findByText(/no books available for exchange/i)).toBeInTheDocument();
+  });
+
   it('shows propose exchange for another user available book', async () => {
     getBook.mockResolvedValue({
       book: {

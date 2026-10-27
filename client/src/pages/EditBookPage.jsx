@@ -82,7 +82,12 @@ export default function EditBookPage() {
 
   return (
     <section>
-      <h2>Edit Book</h2>
+      <div className="page-header">
+        <div>
+          <h2>Edit Book</h2>
+          <p className="page-intro">Update the details other readers see for this listing.</p>
+        </div>
+      </div>
       <BookForm
         values={values}
         onChange={setValues}

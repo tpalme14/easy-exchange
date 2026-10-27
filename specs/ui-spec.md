@@ -143,6 +143,8 @@ Available Books
 
 Books owned by the current user should not provide an option to request an exchange.
 
+When a search is active, the page should summarize the number of matching books and offer a way to clear the search. A search with no matches should show a distinct empty state (rather than the "no books available" message) that includes a clear-search action.
+
 ---
 
 # 7. Book Card
@@ -156,6 +158,10 @@ Each book card should display:
 * View Details action
 
 The card should visually distinguish the book's condition where appropriate.
+
+Because books do not store cover images, each card shows a decorative typographic cover (title and author on a consistent colored book shape). The cover is hidden from assistive technology because the same information is presented as text.
+
+Catalog cards for available books owned by other users may also provide a Propose Exchange shortcut that opens the same proposal flow as the Book Details page.
 
 The card should not display unnecessary information.
 

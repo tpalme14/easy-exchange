@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { deleteBook, getMyBooks } from '../services/bookService.js';
 import { getErrorMessage } from '../utils/errors.js';
-import { formatBookStatus, formatCondition } from '../utils/format.js';
+import BookCard from '../components/BookCard.jsx';
 import ConfirmationDialog from '../components/ConfirmationDialog.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
 import LoadingIndicator from '../components/LoadingIndicator.jsx';
-import StatusBadge from '../components/StatusBadge.jsx';
 
 export default function MyBooksPage() {
   const location = useLocation();
@@ -53,7 +52,13 @@ export default function MyBooksPage() {
   return (
     <section>
       <div className="page-header">
-        <h2>My Books</h2>
+        <div>
+          <h2>My Books</h2>
+          <p className="page-intro">
+            Everything you&apos;ve listed. Available books appear in the catalog for other
+            readers to request.
+          </p>
+        </div>
         <Link className="button" to="/my-books/new">
           Add Book
         </Link>
@@ -63,6 +68,7 @@ export default function MyBooksPage() {
       {loading ? <LoadingIndicator label="Loading your books..." /> : null}
       {!loading && books.length === 0 ? (
         <EmptyState
+          title="Your shelf is waiting"
           message="You haven't added any books yet."
           action={
             <Link className="button" to="/my-books/new">
@@ -71,39 +77,37 @@ export default function MyBooksPage() {
           }
         />
       ) : null}
-      <div className="card-grid">
+      <div className="card-grid book-grid">
         {books.map((book) => (
-          <article className="card" key={book.id}>
-            <h3>{book.title}</h3>
-            <p>{book.author}</p>
-            <p>
-              <StatusBadge type="Condition" value={formatCondition(book.condition)} />
-            </p>
-            <p>
-              <StatusBadge type="Status" value={formatBookStatus(book.status)} />
-            </p>
-            <div className="button-row">
-              <Link className="button secondary" to={`/books/${book.id}`}>
-                View Details
-              </Link>
-              {book.status !== 'EXCHANGED' ? (
-                <>
-                  <Link className="button secondary" to={`/my-books/${book.id}/edit`}>
-                    Edit
-                  </Link>
-                  <button
-                    type="button"
-                    className="danger"
-                    onClick={() => setPendingDelete(book)}
-                  >
-                    Delete
-                  </button>
-                </>
-              ) : (
-                <p className="muted">Exchanged books cannot be edited or deleted.</p>
-              )}
-            </div>
-          </article>
+          <BookCard
+            key={book.id}
+            book={book}
+            showOwner={false}
+            showStatus
+            actions={
+              <>
+                <Link className="button secondary small" to={`/books/${book.id}`}>
+                  View Details
+                </Link>
+                {book.status !== 'EXCHANGED' ? (
+                  <>
+                    <Link className="button secondary small" to={`/my-books/${book.id}/edit`}>
+                      Edit
+                    </Link>
+                    <button
+                      type="button"
+                      className="danger-outline small"
+                      onClick={() => setPendingDelete(book)}
+                    >
+                      Delete
+                    </button>
+                  </>
+                ) : (
+                  <p className="muted small-text">Exchanged books cannot be edited or deleted.</p>
+                )}
+              </>
+            }
+          />
         ))}
       </div>
       {pendingDelete ? (

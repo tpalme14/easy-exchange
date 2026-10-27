@@ -72,30 +72,51 @@ export default function ProfilePage() {
 
   return (
     <section>
-      <h2>Profile</h2>
+      <div className="page-header">
+        <h2>Profile</h2>
+      </div>
       {loading ? <LoadingIndicator label="Loading profile..." /> : null}
       <ErrorMessage message={error} />
       {message ? <p className="notice success">{message}</p> : null}
-      <div className="card stack">
-        <p>
-          <strong>Email:</strong> {user?.email}
-        </p>
-        <p>
-          <strong>Listed books:</strong> {bookCount}
-        </p>
-        <p>
-          <strong>Active exchanges:</strong> {activeExchanges}
-        </p>
+      <div className="profile-layout">
+        <div className="card profile-summary">
+          <div className="profile-identity">
+            <span className="avatar" aria-hidden="true">
+              {(user?.name || '?').trim().charAt(0).toUpperCase()}
+            </span>
+            <div>
+              <p className="profile-name">{user?.name}</p>
+              <p className="muted">
+                <span className="sr-only">Email: </span>
+                {user?.email}
+              </p>
+            </div>
+          </div>
+          <dl className="stat-list">
+            <div>
+              <dt>Listed books</dt>
+              <dd>{bookCount}</dd>
+            </div>
+            <div>
+              <dt>Active exchanges</dt>
+              <dd>{activeExchanges}</dd>
+            </div>
+          </dl>
+        </div>
+        <form className="form card" onSubmit={handleSubmit}>
+          <h3>Display name</h3>
+          <p className="muted small-text">This is how other readers see you on listings and proposals.</p>
+          <label>
+            Name
+            <input value={name} onChange={(event) => setName(event.target.value)} required />
+          </label>
+          <div className="button-row">
+            <button type="submit" disabled={busy || !name.trim()}>
+              {busy ? 'Saving...' : 'Save name'}
+            </button>
+          </div>
+        </form>
       </div>
-      <form className="form" onSubmit={handleSubmit}>
-        <label>
-          Name
-          <input value={name} onChange={(event) => setName(event.target.value)} required />
-        </label>
-        <button type="submit" disabled={busy || !name.trim()}>
-          {busy ? 'Saving...' : 'Save name'}
-        </button>
-      </form>
     </section>
   );
 }

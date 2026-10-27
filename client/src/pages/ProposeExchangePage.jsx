@@ -4,6 +4,7 @@ import { getBook, getMyBooks } from '../services/bookService.js';
 import { createExchange } from '../services/exchangeService.js';
 import { getErrorMessage } from '../utils/errors.js';
 import { formatCondition } from '../utils/format.js';
+import BookCover from '../components/BookCover.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
 import LoadingIndicator from '../components/LoadingIndicator.jsx';
 
@@ -78,37 +79,67 @@ export default function ProposeExchangePage() {
 
   return (
     <section>
-      <h2>{step === 'confirm' ? 'Confirm Exchange' : 'Propose Exchange'}</h2>
+      <div className="page-header">
+        <div>
+          <p className="eyebrow">
+            {step === 'confirm' ? 'Step 2 of 2 · Review and confirm' : 'Step 1 of 2 · Choose a book'}
+          </p>
+          <h2>{step === 'confirm' ? 'Confirm Exchange' : 'Propose Exchange'}</h2>
+        </div>
+      </div>
       <ErrorMessage message={error} />
       {step === 'select' ? (
         <div className="exchange-summary">
-          <article className="card">
-            <h3>You Request</h3>
-            <p>{requested.title}</p>
-            <p>{requested.author}</p>
-            <p>{formatCondition(requested.condition)} condition</p>
-            <p>Owner: {requested.owner.name}</p>
-          </article>
-          <label>
-            You Offer
-            <select
-              value={offeredId}
-              onChange={(event) => setOfferedId(event.target.value)}
-            >
-              <option value="">Select one of your available books</option>
-              {owned.map((book) => (
-                <option key={book.id} value={book.id}>
-                  {book.title} · {formatCondition(book.condition)}
-                </option>
-              ))}
-            </select>
-          </label>
-          {owned.length === 0 ? (
-            <p className="notice info">
-              You need an available book to offer.{' '}
-              <Link to="/my-books/new">Add a Book</Link>
-            </p>
-          ) : null}
+          <div className="exchange-builder">
+            <div className="card exchange-panel">
+              <label className="panel-label">
+                You Offer
+                <select
+                  value={offeredId}
+                  onChange={(event) => setOfferedId(event.target.value)}
+                >
+                  <option value="">Select one of your available books</option>
+                  {owned.map((book) => (
+                    <option key={book.id} value={book.id}>
+                      {book.title} · {formatCondition(book.condition)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {offered ? (
+                <div className="exchange-preview">
+                  <BookCover title={offered.title} author={offered.author} size="sm" />
+                  <div>
+                    <p className="exchange-book-title">{offered.title}</p>
+                    <p className="muted">{offered.author}</p>
+                  </div>
+                </div>
+              ) : owned.length > 0 ? (
+                <p className="muted">Choose the book you&apos;d like to give in return.</p>
+              ) : null}
+              {owned.length === 0 ? (
+                <p className="notice info">
+                  You need an available book to offer.{' '}
+                  <Link to="/my-books/new">Add a Book</Link>
+                </p>
+              ) : null}
+            </div>
+            <span className="exchange-arrow" aria-hidden="true">
+              ⇄
+            </span>
+            <article className="card exchange-panel">
+              <h3 className="panel-label">You Request</h3>
+              <div className="exchange-preview">
+                <BookCover title={requested.title} author={requested.author} size="sm" />
+                <div>
+                  <p className="exchange-book-title">{requested.title}</p>
+                  <p className="muted">{requested.author}</p>
+                  <p className="small-text">{formatCondition(requested.condition)} condition</p>
+                  <p className="small-text">Owner: {requested.owner.name}</p>
+                </div>
+              </div>
+            </article>
+          </div>
           <div className="button-row">
             <Link className="button secondary" to={`/books/${id}`}>
               Cancel
@@ -124,22 +155,39 @@ export default function ProposeExchangePage() {
         </div>
       ) : (
         <div className="exchange-summary">
-          <article className="card">
-            <h3>You are offering</h3>
-            <p>{offered?.title}</p>
-            <p>{offered?.author}</p>
-            <p>{formatCondition(offered?.condition)} condition</p>
-          </article>
-          <article className="card">
-            <h3>In exchange for</h3>
-            <p>{requested.title}</p>
-            <p>{requested.author}</p>
-            <p>{formatCondition(requested.condition)} condition</p>
-          </article>
-          <p>
-            To: <strong>{requested.owner.name}</strong>
-          </p>
-          <p>This proposal cannot be changed after submission.</p>
+          <div className="exchange-builder">
+            <article className="card exchange-panel">
+              <h3 className="panel-label">You are offering</h3>
+              <div className="exchange-preview">
+                <BookCover title={offered?.title} author={offered?.author} size="sm" />
+                <div>
+                  <p className="exchange-book-title">{offered?.title}</p>
+                  <p className="muted">{offered?.author}</p>
+                  <p className="small-text">{formatCondition(offered?.condition)} condition</p>
+                </div>
+              </div>
+            </article>
+            <span className="exchange-arrow" aria-hidden="true">
+              ⇄
+            </span>
+            <article className="card exchange-panel">
+              <h3 className="panel-label">In exchange for</h3>
+              <div className="exchange-preview">
+                <BookCover title={requested.title} author={requested.author} size="sm" />
+                <div>
+                  <p className="exchange-book-title">{requested.title}</p>
+                  <p className="muted">{requested.author}</p>
+                  <p className="small-text">{formatCondition(requested.condition)} condition</p>
+                </div>
+              </div>
+            </article>
+          </div>
+          <div className="confirm-note">
+            <p>
+              To: <strong>{requested.owner.name}</strong>
+            </p>
+            <p className="muted">This proposal cannot be changed after submission.</p>
+          </div>
           <div className="button-row">
             <button type="button" className="secondary" onClick={() => setStep('select')}>
               Back
